@@ -5,9 +5,9 @@
 	void I2C_Init();
 	
 	// do wpisania kodu do pamieci FRAM na adresy od 0x00 4 bajty
-	void FRAM_Write_Code(uint8_t *data);
+	void FRAM_Write_Code(unsigned char *data);
 	
 	// do odczytania kodu do pamieci FRAM na adresy od 0x00 4 bajty
-	void FRAM_Read_Code(uint8_t *data);
+	void FRAM_Read_Code(unsigned char *data);
 
 #endif

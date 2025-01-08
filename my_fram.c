@@ -1,8 +1,7 @@
 // zabiera piny 0.0 i 0.1
 #include "my_fram.h"
 
-#define I2C_ADDR_FRAM  0xA0   // Adres I2C urzadzenia FRAM (7-bitowy)
-#define I2C_BUS_SPEED  400000 // 400 kHz
+#define I2C_ADDR_FRAM  0xAC   // Adres I2C urzadzenia FRAM (7-bitowy)
 
 extern ARM_DRIVER_I2C Driver_I2C1;
 
@@ -10,13 +9,13 @@ void I2C_Init()
 {   
 		Driver_I2C1.Initialize(NULL);                   // Inicjalizacja sterownika
     Driver_I2C1.PowerControl(ARM_POWER_FULL);       // Zasilenie I2C
-    Driver_I2C1.Control(ARM_I2C_BUS_SPEED, I2C_BUS_SPEED); // Ustawienie predkosci magistrali
+    Driver_I2C1.Control(ARM_I2C_BUS_SPEED, ARM_I2C_BUS_SPEED_FAST); // Ustawienie predkosci magistrali
     Driver_I2C1.Control(ARM_I2C_BUS_CLEAR, 0);      // Czyszczenie magistrali
 }
 
 // dla length == 4 - 4 bajty kodu przesylane sa
 // kody sa na 0x00
-void FRAM_Write_Code(uint8_t *data) 
+void FRAM_Write_Code(unsigned char *data) 
 {	
     uint8_t buffer[5]; // bajt adresu + dane
 		buffer[0] = 0x00;
@@ -31,7 +30,7 @@ void FRAM_Write_Code(uint8_t *data)
 }
 
 // kody sa na 0x00
-void FRAM_Read_Code(uint8_t *data) 
+void FRAM_Read_Code(unsigned char *data) 
 {
 		uint8_t addr = 0x00;
     // Wyslanie adresu pamieci do odczytu

@@ -1,4 +1,5 @@
 #include "my_uart.h"
+#include "my_keyboard.h"
 #include <stdbool.h>
 
 #define ROWS 4
@@ -61,7 +62,7 @@ void delay(int ms)
 	//for(long i = 0; i < ms * 10000; ++i);
 }
 
-void scan_keyboard()
+void scan_keyboard(char * code, uint8_t * index)
 {
 	
 	// 1 na kolumnie powoduje w open drain stan wysokiej impedancji Z
@@ -78,9 +79,12 @@ void scan_keyboard()
 		{
 				if( !( LPC_GPIO0->FIOPIN & (1 << (row + 27))  ) )
 				{
-						kod_wejsciowy[index % 4] = keys[kolejnoscR[row]][kolejnoscC[col]];
-						send_char(kod_wejsciowy[index % 4]);
-						++index;
+						if(*index < 4)
+						{
+							code[*index] = keys[kolejnoscR[row]][kolejnoscC[col]];
+							send_char(code[*index % 4]);
+							++(*index);
+						}
 				}
 		}
 		

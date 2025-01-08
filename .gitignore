@@ -1,0 +1,9 @@
+Objects/
+lcd_lib/Readme
+DebugConfig/
+Listings/
+RTE/        
+EventRecorderStub.scvd
+FRAM.uvguix.Igor
+FRAM.uvoptx
+FRAM.uvprojx

@@ -9,6 +9,13 @@ extern char czas_zablokowania[20];
 
 ////////////////////////////////////////////////////////////////
 
+// Inicjalizacja LCD
+void LCD_init() {
+    lcdConfiguration(); // Konfiguracja LCD z biblioteki
+    init_ILI9325();     // Inicjalizacja sterownika ILI9325
+    zamaz(LCDBlack);    // Czyszczenie ekranu
+}
+
 // Funkcja do rysowania pojedynczego piksela
 void zamazPiksel(unsigned int x, unsigned int y, uint16_t color) {
     lcdWriteReg(0x20, x);         // ustawienie X
@@ -46,7 +53,6 @@ void rysujAscii(char ascii, unsigned int pozycjaX, unsigned int pozycjaY, uint16
 }
 
 
-// Funkcja pomocnicza do rysowania tekstu na LCD
 void piszTekst(char *tekst, unsigned pozycjaX, unsigned pozycjaY, uint16_t color) {
     int j = 0;
     while (*tekst) {
@@ -57,7 +63,7 @@ void piszTekst(char *tekst, unsigned pozycjaX, unsigned pozycjaY, uint16_t color
 }
 
 // Aktualizacja wyswietlacza LCD z danymi
-void aktualizujLCD(char *data, char *czas, char *odblokowano, char *zablokowano) {
+/*void aktualizujLCD(char *data, char *czas, char *odblokowano, char *zablokowano) {
     zamaz(LCDBlack); // Czyszczenie ekranu
     
     // Wyswietlanie daty i czasu
@@ -71,15 +77,9 @@ void aktualizujLCD(char *data, char *czas, char *odblokowano, char *zablokowano)
 
     piszTekst("Ostatnia blokada:", 10, 120, LCDWhite);
     piszTekst(zablokowano, 30, 140, LCDBlue);
-}
+}*/
 
-// Inicjalizacja LCD
-void LCD_init() {
-    lcdConfiguration(); // Konfiguracja LCD z biblioteki
-    init_ILI9325();     // Inicjalizacja sterownika ILI9325
-    zamaz(LCDBlack);    // Czyszczenie ekranu
-    piszTekst("Inicjalizacja LCD...", 20, 20, LCDBlue);
-}
+
 
 
 // to do zmiany
@@ -88,21 +88,3 @@ void RTC_getTime(char *data, char *czas) {
     sprintf(czas, "13:15:00");
 }
 
-
-
-/*int main(){
-    char data[20], czas[20];
-    LCD_init();
-
-    while(1){
-        RTC_getTime(data, czas);
-
-        // Aktualizacja LCD z biezacymi danymi
-        aktualizujLCD(data, czas, czas_odblokowania, czas_zablokowania);
-
-        // // Po odblokowaniu zamka
-        // sprintf(czas_odblokowania, "%s %s", data, czas);
-        // // Po zablokowaniu zamka
-        // sprintf(czas_zablokowania, "%s %s", data, czas);
-    }
-}*/

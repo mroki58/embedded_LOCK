@@ -1,12 +1,13 @@
 #include <stdbool.h>
 #include <string.h>
-#include "Board_Buttons.h"
 #include "my_uart.h"
 #include "my_fram.h"
 #include "my_keyboard.h"
 #include "my_LCD.h"
+#include "my_buttons.h"
 
 volatile bool scan_keyboard_flag = false;
+volatile bool button_click_flag = false;
 volatile int n;
 
 void cmp_codes(char * code_1, char * code_2)
@@ -33,6 +34,12 @@ void SysTick_Handler(void)
     n--;
 }
 
+void EINT1_IRQHandler()
+{
+	button_click_flag = true;
+	LPC_SC->EXTINT = 1 << 1; 
+}
+
 // przerwanie na bloku GPIO wykorzystany do znalezienia nastepnego 
 // znaku pobranego z klawiatury
 void EINT3_IRQHandler()
@@ -55,7 +62,8 @@ int main()
     // wyswietlacz LCD
     LCD_init();
     // przyciski
-		Buttons_Initialize();
+		Buttons_init();
+		
     
 	
     // ZMIENNE WYKORZYSTYWANE PRZEZ PROGRAM
@@ -102,17 +110,17 @@ int main()
             scan_keyboard_flag = false;
         }
 
-				/*if(Buttons_GetState() != 0 )
+				if(button_click_flag)
         {
 						// debouncing
-						delay(50);
+						delay(40);
 						//send_char('c');
             change_code_mode = true;
             index = 0;
             // zmien tlo na kolor trybu zmiany kodu
 						trybZmianaKodu(index, kod_docelowy);
             //wyswietlLogi();
-        }*/
+        }
 
         if(scan_keyboard_flag && change_code_mode)
         {
@@ -127,7 +135,7 @@ int main()
                 index = 0;
                 change_code_mode = false;
                 // wyslij kod do modulu pamieci
-                // FRAM_SaveCode(kod_docelowy);
+                FRAM_Write_Code((unsigned char *)kod_docelowy);
                 // zmienic kolor na kolor normalnego trybu
                 ustawTlo(LCDRed);
                 piszTekst("Kod zmieniony", 10, 50, LCDWhite);

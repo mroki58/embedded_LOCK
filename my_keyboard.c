@@ -5,11 +5,7 @@
 #define ROWS 4
 #define COLS 4
 
-extern char kod_wejsciowy[4];
-extern char kod_docelowy[4];
-extern int index;
 	
-
 char keys[ROWS][COLS] = {
 	{'1', '2', '3', 'A'},
 	{'4', '5', '6', 'B'},

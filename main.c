@@ -5,6 +5,7 @@
 #include "my_keyboard.h"
 #include "my_LCD.h"
 #include "my_buttons.h"
+#include "utils.h"
 
 volatile bool scan_keyboard_flag = false;
 volatile bool button_click_flag = false;

@@ -7,6 +7,9 @@
 #include "my_buttons.h"
 #include "utils.h"
 
+// globalna tablica sluzaca do przechowywania 40 bajtow dat - wychodzi z tego 10 dat
+uint8_t _logs[40];
+
 volatile bool scan_keyboard_flag = false;
 volatile bool button_click_flag = false;
 volatile int n;

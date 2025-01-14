@@ -4,6 +4,7 @@ extern uint8_t _logs[40];
 
 // data to 4 zakodowane bajty, dostep w taki sposob w celu optymalizacji wykorzystania miejsca
 // od razu zapisuje nowe daty we FRAM
+// razem z decode bedzie uzyte w funkcjach pobierajacych czas wykorzystujacych RTC
 void dodaj_date(uint8_t * nowa_data)
 {
 	  for(int i=0; i < 36; i += 4)
@@ -30,16 +31,18 @@ void wypisz_date_uart(int i)
 	
 	encode_date(_logs, i, &year, &month, &day, &hour, &minute, &second);
 
-	sprintf(data_txt, "%d:%d:%d %d/%d/%d\n", hour, minute, second, day, month, year);
+	sprintf(data_txt, "%d:%d:%d %d/%d/%d", hour % 100, minute % 100, second % 100, day % 100, month % 100, year % 10000);
 	
 	send_str(data_txt);
+	send_char('\t');
 	
 	
 }
 
 void wypisz_daty()
 {
-		for(int i=0; i < 40; i += 4)
+	send_char('\n');
+		for(int i=0; i < 10; ++i)
 		{
 				wypisz_date_uart(i);
 		}

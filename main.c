@@ -6,6 +6,7 @@
 #include "my_LCD.h"
 #include "my_buttons.h"
 #include "utils.h"
+#include "my_rtc.h"
 
 // globalna tablica sluzaca do przechowywania 40 bajtow dat - wychodzi z tego 10 dat
 uint8_t _logs[40];
@@ -23,6 +24,24 @@ void cmp_codes(char * code_1, char * code_2)
         send_str("Zamek otwarty");
         ustawTlo(LCDGreen); // Zielone tlo dla poprawnego kodu
         piszTekst("Zamek otwarty", 10, 50, LCDWhite);
+			
+				// odczytanie daty wejscia
+				short rok;
+			  uint8_t miesiac, dzien, godzina,  minuta, sekunda;
+				pobierzDate(&rok, &miesiac,&dzien ,&godzina, &minuta, &sekunda);
+				
+				// wypisanie daty na ekran
+				char data_txt[22];
+				sprintf(data_txt, "%d:%d:%d %d/%d/%d", godzina % 100, minuta % 100, sekunda % 100, dzien % 100, miesiac % 100, rok % 10000);
+				piszTekst(data_txt, 80, 30, LCDWhite);
+				
+			
+				//dodanie daty do pamieci
+				uint8_t data[4];
+				decode_date(data, 0, rok, miesiac, dzien, godzina, minuta, sekunda);
+				dodaj_date(data);
+				
+				
     }
     else
     {
@@ -67,8 +86,9 @@ int main()
     LCD_init();
     // przyciski
 		Buttons_init();
+		// inicjalizacja RTC jednorazowa {}
+		//RTC_init();
 		
-    
 	
     // ZMIENNE WYKORZYSTYWANE PRZEZ PROGRAM
 
@@ -85,12 +105,8 @@ int main()
 		
 		trybNormalny(0);
 		
-		// wczytanie kodu do FRAM 
-		FRAM_Write_Code((unsigned char *)"4321");
-		
-		delay(200);
-		
 		FRAM_Read_Code((unsigned char *)kod_docelowy);
+		FRAM_Read_Logs();
 		
 
     while(1)
@@ -117,13 +133,14 @@ int main()
 				if(button_click_flag)
         {
 						// debouncing
-						delay(40);
-						//send_char('c');
+						delay(100);
+						send_char('c');
             change_code_mode = true;
             index = 0;
             // zmien tlo na kolor trybu zmiany kodu
 						trybZmianaKodu(index, kod_docelowy);
-            //wyswietlLogi();
+            wypisz_daty();
+						button_click_flag = false;
         }
 
         if(scan_keyboard_flag && change_code_mode)
@@ -141,8 +158,11 @@ int main()
                 // wyslij kod do modulu pamieci
                 FRAM_Write_Code((unsigned char *)kod_docelowy);
                 // zmienic kolor na kolor normalnego trybu
+								delay(1500);
                 ustawTlo(LCDRed);
-                piszTekst("Kod zmieniony", 10, 50, LCDWhite);
+                piszTekst("Kod zmieniony", 5, 20, LCDWhite);
+								delay(3000);
+								trybNormalny(0);
             }
             scan_keyboard_flag = false;
         }

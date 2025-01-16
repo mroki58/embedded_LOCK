@@ -3,6 +3,7 @@
 	#include "./lcd_lib/Open1768_LCD.h"   // wyswietlacz LCD
 	#include "./lcd_lib/LCD_ILI9325.h"   // sterownik wyswietlacza
 	#include "./lcd_lib/asciiLib.h"      // czcionki
+	#include "my_rtc.h" // pobieranie daty
 	
 	void zamazPiksel(unsigned int x, unsigned int y, uint16_t color);
 	void zamaz(uint16_t color);

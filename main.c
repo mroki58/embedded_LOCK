@@ -14,12 +14,14 @@ uint8_t _logs[40];
 volatile bool scan_keyboard_flag = false;
 volatile bool button_click_flag = false;
 volatile int n;
+volatile bool change_date_on_screen_flag = false;
 
 void cmp_codes(char * code_1, char * code_2)
 {
     if(!strncmp(code_1, code_2, 4))
     {
         // odblokuj zamek
+				LPC_GPIO0->FIOSET = (1u << 10);
         // trzeba jeszcze zalogowac dostanie sie do srodka
         send_str("Zamek otwarty");
         ustawTlo(LCDGreen); // Zielone tlo dla poprawnego kodu
@@ -72,6 +74,13 @@ void EINT3_IRQHandler()
     LPC_GPIOINT->IO0IntClr = (15u << 27);
 }
 
+void RTC_IRQHandler(void)
+{
+	change_date_on_screen_flag = true;
+	// wylaczenie interrupta od countera
+	LPC_RTC->ILR = 1;
+}
+
 int main()
 {
     SysTick_Config(SystemCoreClock/1000);
@@ -86,9 +95,10 @@ int main()
     LCD_init();
     // przyciski
 		Buttons_init();
-		// inicjalizacja RTC jednorazowa {}
-		//RTC_init();
-		
+		// inicjalizacja RTC dla przerwania
+		RTC_init();
+		// Jednorazowa inicjalizacja daty
+		//RTC_set_date();
 	
     // ZMIENNE WYKORZYSTYWANE PRZEZ PROGRAM
 
@@ -125,6 +135,7 @@ int main()
                 index = 0;
                 cmp_codes(kod_wejsciowy, kod_docelowy);
 								delay(5000);
+								LPC_GPIO0->FIOCLR = (1u << 10);
 								trybNormalny(0);
             }
             scan_keyboard_flag = false;
@@ -154,18 +165,27 @@ int main()
             if(index >= 4)
             {
                 index = 0;
-                change_code_mode = false;
                 // wyslij kod do modulu pamieci
                 FRAM_Write_Code((unsigned char *)kod_docelowy);
-                // zmienic kolor na kolor normalnego trybu
+								// utrzymuje widoczny kod jeszcze przez chwile na ekranie
 								delay(1500);
+								// zmienic kolor na kolor normalnego trybu
                 ustawTlo(LCDRed);
                 piszTekst("Kod zmieniony", 5, 20, LCDWhite);
 								delay(3000);
+								// powrot do normalnego trybu
 								trybNormalny(0);
+								change_code_mode = false;
             }
             scan_keyboard_flag = false;
         }
+				
+				// zmieniamy date bo jestesmy w trybie normalnym
+				if(change_date_on_screen_flag && !change_code_mode)
+				{
+					trybNormalny(index);
+					change_date_on_screen_flag = false;
+				}
     }
 }
 

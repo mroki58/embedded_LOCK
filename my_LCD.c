@@ -76,6 +76,16 @@ void trybNormalny(uint8_t wpisaneZnaki) {
         maskowaneZnaki[i] = '*';
     }
     piszTekst(maskowaneZnaki, 30, 30, LCDWhite);
+		
+		short rok;
+		uint8_t miesiac, dzien, godzina, minuta, sekunda;
+		pobierzDate(&rok, &miesiac, &dzien, &godzina, &minuta, &sekunda);
+		
+		char data_txt[18];
+		sprintf(data_txt, "%d:%d %d/%d/%d", godzina % 100, minuta % 100, dzien % 100, miesiac % 100, rok % 10000);
+		piszTekst(data_txt, 30, 70, LCDWhite);
+		
+		
 }
 
 ////////////////////////////////////////////////////////////////
@@ -101,15 +111,5 @@ void trybZmianaKodu(uint8_t wpisaneZnaki, char * code) {
 
 ////////////////////////////////////////////////////////////////
 
-// Funkcja do wyswietlenia logów
-void wyswietlLogi() {
-    char log[50];
-    
-    // Pobieranie logow z FRAM
-    //sprintf(log, "Odblokowano: %s", czas_odblokowania);
-    //piszTekst(log, 10, 50, LCDWhite);
 
-    //sprintf(log, "Zablokowano: %s", czas_zablokowania);
-    //piszTekst(log, 10, 70, LCDWhite);
-}
 

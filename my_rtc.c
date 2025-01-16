@@ -2,15 +2,19 @@
 
 void RTC_init()
 {
-	// wylacza kalibracje 4 bit i wlacza counter 1 bit
-	LPC_RTC->CCR = 1u | (1u << 4);	
-	RTC_set_date();
+	// minuta odpala interrupta
+	LPC_RTC->CIIR = (1u << 1); 
 	
+	NVIC_EnableIRQ(RTC_IRQn);
 }
 
 // do uzycia jednorazowo
 void RTC_set_date()
 {
+	// wylacza kalibracje 4 bit i wlacza counter 1 bit
+	LPC_RTC->CCR = 1u | (1u << 4);	
+
+	// ustawienie daty	
 	LPC_RTC->SEC = 45;
 	LPC_RTC->MIN = 45;
 	LPC_RTC->HOUR = 13;

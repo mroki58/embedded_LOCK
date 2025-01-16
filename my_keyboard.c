@@ -48,6 +48,10 @@ void GPIO_init()
 	// interrupt dla GPIO enablniety
 	NVIC_EnableIRQ(EINT3_IRQn);
 	
+	//konfiguracja dodatkowego bita do wyswietlania wartosci 1 i 0 na pinie P0.10
+	LPC_GPIO0->FIODIR |= (1u << 10);
+	LPC_GPIO0->FIOCLR = (1u << 10);
+	
 }
 
 extern int n;

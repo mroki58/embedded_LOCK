@@ -82,7 +82,9 @@ void scan_keyboard(char * code, uint8_t * index)
 						if(*index < 4)
 						{
 							code[*index] = keys[kolejnoscR[row]][kolejnoscC[col]];
+							send_str("Wcisnieto przycisk: ");
 							send_char(code[*index % 4]);
+							send_char('\t');
 							++(*index);
 						}
 				}

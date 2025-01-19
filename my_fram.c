@@ -32,6 +32,7 @@ void FRAM_Write_Code(unsigned char *data)
     // Wyslanie danych do FRAM
     Driver_I2C1.MasterTransmit(I2C_ADDR_FRAM, buffer, 5, false); // false = stop
     while (Driver_I2C1.GetStatus().busy);  // Czekaj na zakonczenie transmisji
+		send_str("Przeslano kod do pamieci FRAM\t");
 }
 
 // kody sa na 0x00
@@ -46,6 +47,7 @@ void FRAM_Read_Code(unsigned char *data)
     // Odczyt danych
     Driver_I2C1.MasterReceive(I2C_ADDR_FRAM, data, 4, false); // false = stop
     while (Driver_I2C1.GetStatus().busy);
+		send_str("Pobrano kod z pamieci FRAM\t");
 }
 
 void FRAM_Write_Logs()
@@ -60,7 +62,7 @@ void FRAM_Write_Logs()
     // Wyslanie danych do FRAM
     Driver_I2C1.MasterTransmit(I2C_ADDR_FRAM, buffer, 41, false); // false = stop
     while (Driver_I2C1.GetStatus().busy);  // Czekaj na zakonczenie transmisji
-	
+		send_str("Zapisano daty do pamieci FRAM\t");
 }
 
 void FRAM_Read_Logs()
@@ -74,6 +76,7 @@ void FRAM_Read_Logs()
 	
 		Driver_I2C1.MasterReceive(I2C_ADDR_FRAM, _logs, 40, false);
 		while (Driver_I2C1.GetStatus().busy);
+		send_str("Pobrano daty z pamieci FRAM\t");
 }
 
 

@@ -27,6 +27,8 @@
 	// Wyswietlanie logów z pamieci FRAM
 	void wyswietlLogi(void);
 	
+	void aktualizujGUI(bool trybZmiana, uint8_t wpisaneZnaki, const char *kod_wejsciowy, char *log_odblokowania, char *log_zablokowania);
+	
 
 #endif
 

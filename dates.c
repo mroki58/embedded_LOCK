@@ -31,7 +31,7 @@ void wypisz_date_uart(int i)
 	
 	encode_date(_logs, i, &year, &month, &day, &hour, &minute, &second);
 
-	sprintf(data_txt, "%d:%d:%d %d/%d/%d", hour % 100, minute % 100, second % 100, day % 100, month % 100, year % 10000);
+	sprintf(data_txt, "%02d:%02d:%02d %02d/%02d/%d", hour % 100, minute % 100, second % 100, day % 100, month % 100, year % 10000);
 	
 	send_str(data_txt);
 	send_char('\t');
@@ -41,7 +41,7 @@ void wypisz_date_uart(int i)
 
 void wypisz_daty()
 {
-	send_char('\n');
+		send_str("Daty ostatnich odblokowan:\t");
 		for(int i=0; i < 10; ++i)
 		{
 				wypisz_date_uart(i);

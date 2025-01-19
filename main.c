@@ -23,9 +23,9 @@ void cmp_codes(char * code_1, char * code_2)
         // odblokuj zamek
 				LPC_GPIO0->FIOSET = (1u << 10);
         // trzeba jeszcze zalogowac dostanie sie do srodka
-        send_str("Zamek otwarty");
+        send_str("Zamek otwarty\t");
         ustawTlo(LCDGreen); // Zielone tlo dla poprawnego kodu
-        piszTekst("Zamek otwarty", 10, 50, LCDWhite);
+        piszTekst("Zamek otwarty", 60, 50, LCDWhite);
 			
 				// odczytanie daty wejscia
 				short rok;
@@ -34,8 +34,8 @@ void cmp_codes(char * code_1, char * code_2)
 				
 				// wypisanie daty na ekran
 				char data_txt[22];
-				sprintf(data_txt, "%d:%d:%d %d/%d/%d", godzina % 100, minuta % 100, sekunda % 100, dzien % 100, miesiac % 100, rok % 10000);
-				piszTekst(data_txt, 80, 30, LCDWhite);
+				sprintf(data_txt, "%02d:%02d:%02d %02d/%02d/%d", godzina % 100, minuta % 100, sekunda % 100, dzien % 100, miesiac % 100, rok % 10000);
+				piszTekst(data_txt, 120, 30, LCDWhite);
 				
 			
 				//dodanie daty do pamieci
@@ -48,11 +48,13 @@ void cmp_codes(char * code_1, char * code_2)
     else
     {
         // nie odblokowywuj zamka
-        send_str("Zly kod");
+        send_str("Zly kod\t");
         ustawTlo(LCDRed); // Czerwone tlo dla blednego kodu
-        piszTekst("Zly kod", 10, 50, LCDWhite);
+        piszTekst("Zly kod", 150, 70, LCDWhite);
     }
 }
+
+
 
 void SysTick_Handler(void)
 {
@@ -112,11 +114,11 @@ int main()
     char kod_wejsciowy[5];
     // ostatni znak kodu wejsciowego to znak konca lancucha
     kod_wejsciowy[4] = '\0';
-		
-		trybNormalny(0);
-		
+				
 		FRAM_Read_Code((unsigned char *)kod_docelowy);
 		FRAM_Read_Logs();
+		
+		trybNormalny(0);
 		
 
     while(1)
@@ -124,7 +126,7 @@ int main()
         // sprawdzamy czy nie jestesmy w trybie zmiany kodu 
         if(scan_keyboard_flag && (!change_code_mode))
         {
-            //send_char('-');
+            send_str("Wykryto wcisniecie klawisza\t");
             scan_keyboard(kod_wejsciowy, &index);
 
             // Wyswietlanie gwiazdek w trybie normalnym
@@ -145,7 +147,7 @@ int main()
         {
 						// debouncing
 						delay(100);
-						send_char('c');
+						send_str("Wcisnieto przycisk\t");
             change_code_mode = true;
             index = 0;
             // zmien tlo na kolor trybu zmiany kodu
@@ -156,7 +158,7 @@ int main()
 
         if(scan_keyboard_flag && change_code_mode)
         {
-            //send_char('&');
+            send_str("Wykryto wcisniecie klawisza\t");
             scan_keyboard(kod_docelowy, &index);
 
             // Wyswietlanie cyfr w trybie zmiany kodu
@@ -171,7 +173,7 @@ int main()
 								delay(1500);
 								// zmienic kolor na kolor normalnego trybu
                 ustawTlo(LCDRed);
-                piszTekst("Kod zmieniony", 5, 20, LCDWhite);
+                piszTekst("Kod zmieniony", 120, 40, LCDWhite);
 								delay(3000);
 								// powrot do normalnego trybu
 								trybNormalny(0);
@@ -188,5 +190,6 @@ int main()
 				}
     }
 }
+
 
 
